@@ -5,6 +5,9 @@ export const resolvers = {
     jobs: () => Job.findAll(),
     company: (_root, args) => Company.findById(args.id),
   },
+  Company: {
+    jobs: (company) => Job.findAll((job) => job.companyId === company.id),
+  },
   Job: {
     // job here is the parent
     company: (job) => Company.findById(job.companyId),
