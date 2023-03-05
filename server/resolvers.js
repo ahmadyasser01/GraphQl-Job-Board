@@ -6,9 +6,9 @@ export const resolvers = {
     company: (_root, args) => Company.findById(args.id),
   },
   Mutation: {
-    createJob: (_root, { input }) => {
-      if (!auth) throw new Error("Unauthorized");
-      return Job.create(input);
+    createJob: (_root, { user }) => {
+      if (!user) throw new Error("Unauthorized");
+      return Job.create({ ...input, companyId: user.companyId });
     },
     deleteJob: (_root, { id }) => Job.delete(id),
     updateJob: (_root, { input }) => Job.update(input),
