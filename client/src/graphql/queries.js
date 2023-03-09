@@ -1,5 +1,6 @@
 import { ApolloClient, gql, InMemoryCache } from "@apollo/client";
 import { getAccessToken } from "../auth";
+import { JOB_QUERY } from "./queries-string";
 
 const GRAPHQL_URL = "http://localhost:9000/graphql";
 const client = new ApolloClient({
@@ -25,23 +26,10 @@ export async function getJobs() {
   return jobs;
 }
 export async function getJob(id) {
-  const query = gql`
-    query JobQuery($id: ID!) {
-      job(id: $id) {
-        id
-        title
-        company {
-          id
-          name
-        }
-        description
-      }
-    }
-  `;
   const variables = { id };
   const {
     data: { job },
-  } = await client.query({ query, variables });
+  } = await client.query({ query: JOB_QUERY, variables });
   return job;
 }
 
@@ -72,6 +60,12 @@ export async function createJob(input) {
     mutation CreateJob($input: CreateJobInput!) {
       job: createJob(input: $input) {
         id
+        title
+        company {
+          id
+          name
+        }
+        description
       }
     }
   `;
@@ -82,6 +76,17 @@ export async function createJob(input) {
   };
   const {
     data: { job },
-  } = await client.mutate({ mutation, variables, context });
+  } = await client.mutate({
+    mutation,
+    variables,
+    context,
+    update: (cache, { data: { job } }) => {
+      cache.writeQuery({
+        query: JOB_QUERY,
+        variables: { id: job.id },
+        data: { job },
+      });
+    },
+  });
   return job;
 }
