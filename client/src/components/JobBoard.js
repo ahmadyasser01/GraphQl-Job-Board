@@ -1,19 +1,15 @@
 import JobList from "./JobList";
-import { jobs } from "../fake-data";
-import { useEffect, useState } from "react";
-import { getJobs } from "../graphql/queries";
+import { useQuery } from "@apollo/client";
+import { JOBS_QUERY } from "../graphql/queries-string";
 
 function JobBoard() {
-  const [jobs, setJobs] = useState([]);
-  const [error, setError] = useState(false);
-  useEffect(() => {
-    getJobs()
-      .then(setJobs)
-      .catch((err) => {
-        console.error(err);
-        setError(true);
-      });
-  }, []);
+  const { data, loading, error } = useQuery(JOBS_QUERY, {
+    fetchPolicy: "network-only",
+  });
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+  const { jobs } = data;
   if (error) return <>Sorry, Something went Wrong!!</>;
   return (
     <div>
