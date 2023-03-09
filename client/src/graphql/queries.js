@@ -1,6 +1,6 @@
 import { ApolloClient, gql, InMemoryCache } from "@apollo/client";
 import { getAccessToken } from "../auth";
-import { JOB_QUERY } from "./queries-string";
+import { JOB_DETAIL_FRAGMENT, JOB_QUERY } from "./queries-string";
 
 const GRAPHQL_URL = "http://localhost:9000/graphql";
 const client = new ApolloClient({
@@ -59,15 +59,10 @@ export async function createJob(input) {
   const mutation = gql`
     mutation CreateJob($input: CreateJobInput!) {
       job: createJob(input: $input) {
-        id
-        title
-        company {
-          id
-          name
-        }
-        description
+        ...JobDetail
       }
     }
+    ${JOB_DETAIL_FRAGMENT}
   `;
   const variables = { input };
 
