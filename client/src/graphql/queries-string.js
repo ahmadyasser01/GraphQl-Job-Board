@@ -18,3 +18,15 @@ export const JOB_QUERY = gql`
   }
   ${JOB_DETAIL_FRAGMENT}
 `;
+export const JOBS_QUERY = gql`
+  query JobsQuery {
+    jobs {
+      id
+      title
+      company {
+        id
+        name
+      }
+    }
+  }
+`;
