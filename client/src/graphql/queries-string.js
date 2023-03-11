@@ -30,3 +30,16 @@ export const JOBS_QUERY = gql`
     }
   }
 `;
+export const COMPANY_QUERY = gql`
+  query companyQuery($id: ID!) {
+    company(id: $id) {
+      id
+      name
+      description
+      jobs {
+        id
+        title
+      }
+    }
+  }
+`;
